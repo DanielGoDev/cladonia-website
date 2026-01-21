@@ -1,0 +1,31 @@
+import Link from "next/link";
+import Image from "next/image";
+
+export default function Card({ title, description, image }) {
+    return (
+        <div className="relative rounded-lg overflow-hidden w-98.25 h-174.75">
+            <Image 
+                src={image} 
+                alt={title}
+                width={393}
+                height={699}
+                className="w-full h-174.75 object-cover"
+            />
+            <div className="absolute inset-0 p-6 flex flex-col items-center justify-end">
+                <div className="text-center text-white">
+                    <h3 className="text-xl font-bold mb-2">{title}</h3>
+                    <p className="mb-4 text-sm">{description}
+                        <Link href="/experiencies" className="text-white text-lg font-extrabold ml-1">
+                            ...ver más
+                        </Link>
+                    </p>
+                </div>
+                <Link
+                    href="/reservar"
+                    className="bg-(--color-primary) text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-amber-200 transition">
+                    Reservar
+                </Link>
+            </div>
+        </div>
+    )
+}

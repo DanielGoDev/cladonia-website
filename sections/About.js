@@ -1,0 +1,57 @@
+import Image from "next/image";
+
+export default function About() {
+    return (
+        <section className="relative w-screen min-h-screen bg-black text-white py-20">  
+            {/* TÍTULO */}
+            <h2 className="text-4xl font-medium text-center mb-16">C L A D O N I A</h2>
+            
+            {/* CONTENIDO */}
+            <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-start gap-8 lg:gap-32 px-6">
+                {/* TEXTO IZQUIERDA */}
+                <div className="w-full lg:w-full">
+                    <p className="text-justify text-base lg:text-lg leading-relaxed">
+                        En Cladonia, somos apasionados por la naturaleza y las aventuras al aire libre.
+                        Nuestra misión es ofrecer experiencias únicas que conecten a las personas con el entorno natural.
+                        <br /><br />Fundada por un grupo de entusiastas del senderismo y la exploración, Cladonia se dedica a organizar excursiones,
+                        talleres y eventos que promueven la conservación y el respeto por la naturaleza.
+                        <br /><br />Nuestro propósito es ofrecer experiencias de conexión con la naturaleza a través de recorridos guiados, observación de fauna y programas de educación ambiental. 
+                    </p>
+                </div>
+                
+                {/* BENTO GRID DERECHA */}
+                <div className="w-full grid grid-cols-5 grid-rows-4 gap-2 h-64 lg:h-96">
+                    <div className="relative rounded-lg bg-black overflow-hidden row-span-2"></div>
+                     <div className="relative rounded-lg overflow-hidden row-span-2">
+                        <Image src="/images/img_1.png" alt="Naturaleza 1" fill className="object-cover"/>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden col-span-2">
+                        <Image src="/images/img_2.png" alt="Naturaleza 2" fill className="object-cover"/>
+                    </div>
+                    <div className="relative rounded-lg bg-black overflow-hidden row-span-1"></div>
+                    <div className="relative rounded-lg overflow-hidden row-span-2">
+                        <Image src="/images/img_3.png" alt="Naturaleza 3" fill className="object-cover"/>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden col-span-2">
+                        <Image src="/images/img_3.png" alt="Naturaleza 3" fill className="object-cover"/>
+                    </div>
+                    
+                    <div className="relative rounded-lg overflow-hidden col-span-2">
+                        <Image src="/images/img_3.png" alt="Naturaleza 3" fill className="object-cover"/>
+                    </div>
+                    <div className="relative rounded-lg overflow-hidden row-span-2">
+                        <Image src="/images/img_3.png" alt="Naturaleza 3" fill className="object-cover"/>
+                    </div>
+                    <div className="relative rounded-lg bg-black overflow-hidden row-span-2"></div>
+                    <div className="relative rounded-lg bg-black overflow-hidden row-span-2"></div>
+                    <div className="relative rounded-lg overflow-hidden col-span-2">
+                        <Image src="/images/img_2.png" alt="Naturaleza 2" fill className="object-cover"/>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </section>                          
+    )
+    
+}
