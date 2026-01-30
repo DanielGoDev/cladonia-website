@@ -63,9 +63,9 @@ export default function FormPage() {
             <h2 className="text-4xl font-bold text-white text-balance text-center mb-8">
                 Ingresa tus datos<br />para reservar
             </h2>
-            <div className="w-full max-w-3xl mx-auto px-12">
-            <form className="space-y-6">
-                    <div className="flex flex-row justify-between gap-4">
+            <div className="w-full max-w-3xl mx-auto px-4 md:px-8 lg:px-12">
+            <form className="space-y-4 md:space-y-6">
+                    <div className="flex flex-col md:flex-row justify-between gap-4">
                         <div className="flex-1">
                             <label htmlFor="name" className="block text-sm font-medium mb-1">Nombre</label>
                             <input type="text" id="name" name="name" required value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
@@ -76,8 +76,8 @@ export default function FormPage() {
                         </div>
                     </div>
                     
-                    <div className="flex flex-row gap-4">
-                        <div className="w-2/5">
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="w-full md:w-2/5">
                             <label htmlFor="tel" className="block text-sm font-medium mb-1">Teléfono</label>
                             <input type="tel" id="tel" name="tel" required value={formData.tel} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
                         </div>
@@ -108,7 +108,7 @@ export default function FormPage() {
                             <option value="fotografico">Tour Fotográfico</option>
                         </select>
                     </div>
-                    <div className="flex flex-row gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <label htmlFor="children" className="block text-sm font-medium mb-1">Niños o Estudiantes</label>
                             <input type="number" id="children" name="children" min="0" value={formData.children} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
