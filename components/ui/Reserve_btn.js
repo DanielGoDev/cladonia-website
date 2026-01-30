@@ -1,11 +1,19 @@
+"use client";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ReserveBtn() {
+    const router = useRouter();
+    
+    const handleClick = () => {
+        router.push('/form');
+    };
+    
     return (
-        <Link
-            href="/form"
-            className="bg-yellow-400 text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-yellow-500 transition">
+        <button
+            onClick={handleClick}
+            className="bg-yellow-400 text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-yellow-500 transition cursor-pointer">
             Reservar
-        </Link>
+        </button>
     );
 }

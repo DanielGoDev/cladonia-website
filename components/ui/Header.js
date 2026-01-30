@@ -21,7 +21,7 @@ export default function Header() {
                 src="/tipografia.svg"
                 alt="Nombre del proyecto"
                 width={150} height={30}
-                className="absolute left-1/2 -translate-x-1/2 object-cover invert md:w-[200px] md:h-[40px]"
+                className="absolute left-1/2 -translate-x-1/2 object-contain invert md:w-50 md:h-10"
             />
 
             {/* Botón de acción principal */}
