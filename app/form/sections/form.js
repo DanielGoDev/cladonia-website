@@ -4,7 +4,10 @@ import { useState } from "react";
 
 export default function FormPage() {
   const [selectedDestination, setSelectedDestination] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     lastname: "",
@@ -28,9 +31,78 @@ export default function FormPage() {
     return selectedDestination ? destinationPrices[selectedDestination] : { basic: 50000, standard: 80000, premium: 120000 };
   };
 
+  const currentPrices = getCurrentPrices();
+
+  // Cálculo directo y simple
+  const calculateTotal = () => {
+    if (!selectedPlan) return null;
+    
+    const basePrice = currentPrices[selectedPlan];
+    const children = parseInt(formData.children) || 0;
+    const adults = parseInt(formData.adults) || 0;
+    const seniors = parseInt(formData.seniors) || 0;
+    
+    // Solo calcular si hay al menos una persona
+    const totalPersons = children + adults + seniors;
+    if (totalPersons === 0) return null;
+    
+    // Precios con descuentos
+    const childrenTotal = Math.round(basePrice * children * 0.7); // 30% descuento
+    const adultsTotal = Math.round(basePrice * adults);
+    const seniorsTotal = Math.round(basePrice * seniors * 0.8); // 20% descuento
+    
+    const total = childrenTotal + adultsTotal + seniorsTotal;
+    
+    return {
+      children: { count: children, total: childrenTotal },
+      adults: { count: adults, total: adultsTotal },
+      seniors: { count: seniors, total: seniorsTotal },
+      totalPersons,
+      total
+    };
+  };
+  
+  const calculation = calculateTotal();
+  
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(price);
+  };
+
+  // Actividades por destino
+  const destinationActivities = {
+    chingaza: [
+      { value: "lagunas_siecha", label: "Senderismo a las lagunas de Siecha" },
+      { value: "observacion_aves", label: "Observación de aves" },
+      { value: "fotografia_paisaje", label: "Fotografía de paisaje" }
+    ],
+    zoque: [
+      { value: "caminata_ecologica", label: "Caminata ecológica" },
+      { value: "avistamiento_fauna", label: "Avistamiento de fauna" },
+      { value: "plantas_medicinales", label: "Taller de plantas medicinales" }
+    ],
+    fotografico: [
+      { value: "amanecer_montaña", label: "Fotografía de amanecer en montaña" },
+      { value: "macro_flora", label: "Macrofotografía de flora" },
+      { value: "paisajes_aereos", label: "Paisajes aéreos con drone" }
+    ]
+  };
+
+  const getAvailableActivities = () => {
+    return selectedDestination ? destinationActivities[selectedDestination] : [];
+  };
+
   const handleDestinationChange = (e) => {
     setSelectedDestination(e.target.value);
+    setSelectedActivity(""); // Reset activity selection when destination changes
     setSelectedPlan(""); // Reset plan selection when destination changes
+  };
+
+  const handleActivityChange = (e) => {
+    setSelectedActivity(e.target.value);
   };
 
   const handlePlanChange = (planValue) => {
@@ -44,8 +116,6 @@ export default function FormPage() {
       [name]: value
     }));
   };
-
-  const currentPrices = getCurrentPrices();
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
@@ -63,12 +133,12 @@ export default function FormPage() {
             <h2 className="text-4xl font-bold text-white text-balance text-center mb-8">
                 Ingresa tus datos<br />para reservar
             </h2>
-            <div className="w-full max-w-3xl mx-auto px-4 md:px-8 lg:px-12">
+            <div className="w-full max-w-5xl mx-auto px-4 md:px-8 lg:px-12">
             <form className="space-y-4 md:space-y-6">
                     <div className="flex flex-col md:flex-row justify-between gap-4">
                         <div className="flex-1">
                             <label htmlFor="name" className="block text-sm font-medium mb-1">Nombre</label>
-                            <input type="text" id="name" name="name" required value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
+                            <input type="text" id="name" name="name" required value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black transition-colors" />
                         </div>
                         <div className="flex-1">
                             <label htmlFor="lastname" className="block text-sm font-medium mb-1">Apellido</label>
@@ -92,22 +162,28 @@ export default function FormPage() {
                     </div>
                     <div>
                         <label htmlFor="destination" className="block text-sm font-medium mb-1">Destino</label>
-                        <select id="destination" name="destination" required value={selectedDestination} onChange={handleDestinationChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black">
+                        <select id="destination" name="destination" required value={selectedDestination} onChange={handleDestinationChange} className={`w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-400 [&>option]:bg-white [&>option]:text-gray-800 ${
+                            selectedDestination ? 'bg-white text-black border-gray-300' : 'bg-gray-800/40 text-white border-gray-700'
+                        }`}>
                             <option value="">Selecciona un destino</option>
                             <option value="chingaza">Parque Nacional Chingaza</option>
                             <option value="zoque">Reserva Natural El Zoque</option>
                             <option value="fotografico">Tour Fotográfico</option>
                         </select>
                     </div>
-                    <div>
-                        <label htmlFor="destination" className="block text-sm font-medium mb-1">Actividad</label>
-                        <select id="destination" name="destination" required value={selectedDestination} onChange={handleDestinationChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black">
-                            <option value="">Selecciona un destino</option>
-                            <option value="chingaza">Senderismo a las lagunas de Siecha</option>
-                            <option value="zoque">Reserva Natural El Zoque</option>
-                            <option value="fotografico">Tour Fotográfico</option>
-                        </select>
-                    </div>
+                    {selectedDestination && (
+                        <div>
+                            <label htmlFor="activity" className="block text-sm font-medium mb-1">Actividad</label>
+                            <select id="activity" name="activity" required value={selectedActivity} onChange={handleActivityChange} className={`w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-400 [&>option]:bg-white [&>option]:text-gray-800 ${
+                                selectedActivity ? 'bg-white text-black border-gray-300' : 'bg-gray-800/40 text-white border-gray-700'
+                            }`}>
+                                <option value="">Selecciona una actividad</option>
+                                {availableActivities.map((activity) => (
+                                    <option key={activity.value} value={activity.value}>{activity.label}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <label htmlFor="children" className="block text-sm font-medium mb-1">Niños o Estudiantes</label>
@@ -126,62 +202,197 @@ export default function FormPage() {
                         <label htmlFor="description" className="block text-sm font-medium mb-1">Observaciones (máx. 120 caracteres)</label>
                         <textarea id="description" name="description" maxLength="120" rows="3" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black resize-none" placeholder="Cuéntanos sobre algo que debamos saber..."></textarea>
                     </div>
-                    <div>
-                        <h3 className="text-lg font-semibold mb-4 text-center">Selecciona tu Plan</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className={`bg-gray-800/40 border rounded-lg p-4 hover:border-yellow-400 transition cursor-pointer ${
-                                selectedPlan === 'basic' ? 'border-yellow-400 bg-yellow-400/10' : 'border-gray-700'
+                    
+                    {/* Términos y Condiciones */}
+                    <div className="mt-12 mb-16 space-y-4">
+                        <div className="flex items-start space-x-3">
+                            <input 
+                                type="checkbox" 
+                                id="terms" 
+                                checked={acceptTerms} 
+                                onChange={(e) => setAcceptTerms(e.target.checked)}
+                                className="mt-1 w-4 h-4 text-yellow-400 bg-gray-800/40 border-gray-700 rounded focus:ring-yellow-400 focus:ring-2"
+                            />
+                            <label htmlFor="terms" className="text-sm text-white leading-relaxed">
+                                Acepto los <span className="text-yellow-400 underline cursor-pointer hover:text-yellow-300">Términos y Condiciones</span> del servicio
+                            </label>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                            <input 
+                                type="checkbox" 
+                                id="privacy" 
+                                checked={acceptPrivacy} 
+                                onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                                className="mt-1 w-4 h-4 text-yellow-400 bg-gray-800/40 border-gray-700 rounded focus:ring-yellow-400 focus:ring-2"
+                            />
+                            <label htmlFor="privacy" className="text-sm text-white leading-relaxed">
+                                Autorizo el tratamiento de mis datos personales conforme a la <span className="text-yellow-400 underline cursor-pointer hover:text-yellow-300">Política de Privacidad y Protección de Datos Personales</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div className="mt-8">
+                        <h3 className="text-lg font-semibold mb-8 text-center">Selecciona tu Plan</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Plan Básico */}
+                            <div className={`relative bg-gray-800/40 rounded-xl border-2 cursor-pointer hover:border-yellow-400 transition-colors ${
+                                selectedPlan === 'basic' ? 'border-yellow-400' : 'border-gray-700'
                             }`} onClick={() => handlePlanChange('basic')}>
+                                <div className="p-6">
+                                    <div className="text-center mb-4">
+                                        <h4 className="text-xl font-bold text-yellow-400 mb-2">Plan Básico</h4>
+                                        <p className="text-white text-sm">Experiencia esencial</p>
+                                    </div>
+                                    <div className="text-center mb-6">
+                                        <div className="text-3xl font-bold text-white">${(currentPrices.basic / 1000).toFixed(0)}K</div>
+                                        <div className="text-gray-300 text-sm">por persona</div>
+                                    </div>
+                                    <ul className="space-y-3 mb-6">
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Guía especializado
+                                        </li>
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Póliza de seguro incluida
+                                        </li>
+                                    </ul>
+                                </div>
                                 <input type="radio" id="basic" name="plan" value="basic" checked={selectedPlan === 'basic'} onChange={() => handlePlanChange('basic')} className="sr-only" />
-                                <label htmlFor="basic" className="cursor-pointer">
-                                    <h4 className="font-bold text-yellow-400 mb-2">Plan Básico</h4>
-                                    <p className="text-sm mb-2">Experiencia esencial</p>
-                                    <p className="text-lg font-bold">${currentPrices.basic.toLocaleString()}</p>
-                                    <ul className="text-xs mt-2 space-y-1">
-                                        <li>• Guía especializado</li>
-                                        <li>• Duración: 4 horas</li>
-                                        <li>• Refrigerio incluido</li>
-                                    </ul>
-                                </label>
                             </div>
-                            <div className={`bg-gray-800/40 border rounded-lg p-4 hover:border-yellow-400 transition cursor-pointer ${
-                                selectedPlan === 'standard' ? 'border-yellow-400 bg-yellow-400/10' : 'border-gray-700'
+
+                            {/* Plan Estándar */}
+                            <div className={`relative bg-gray-800/40 rounded-xl border-2 cursor-pointer hover:border-yellow-400 transition-colors ${
+                                selectedPlan === 'standard' ? 'border-yellow-400' : 'border-gray-700'
                             }`} onClick={() => handlePlanChange('standard')}>
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                    <span className="bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">MÁS POPULAR</span>
+                                </div>
+                                <div className="p-6">
+                                    <div className="text-center mb-4">
+                                        <h4 className="text-xl font-bold text-yellow-400 mb-2">Plan Estándar</h4>
+                                        <p className="text-white text-sm">Experiencia completa</p>
+                                    </div>
+                                    <div className="text-center mb-6">
+                                        <div className="text-3xl font-bold text-white">${(currentPrices.standard / 1000).toFixed(0)}K</div>
+                                        <div className="text-gray-300 text-sm">por persona</div>
+                                    </div>
+                                    <ul className="space-y-3 mb-6">
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Todo del plan básico
+                                        </li>
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Almuerzo incluido
+                                        </li>
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Transporte incluido
+                                        </li>
+                                    </ul>
+                                </div>
                                 <input type="radio" id="standard" name="plan" value="standard" checked={selectedPlan === 'standard'} onChange={() => handlePlanChange('standard')} className="sr-only" />
-                                <label htmlFor="standard" className="cursor-pointer">
-                                    <h4 className="font-bold text-yellow-400 mb-2">Plan Estándar</h4>
-                                    <p className="text-sm mb-2">Experiencia completa</p>
-                                    <p className="text-lg font-bold">${currentPrices.standard.toLocaleString()}</p>
-                                    <ul className="text-xs mt-2 space-y-1">
-                                        <li>• Todo del plan básico</li>
-                                        <li>• Duración: 6 horas</li>
-                                        <li>• Almuerzo incluido</li>
-                                        <li>• Transporte</li>
-                                    </ul>
-                                </label>
                             </div>
-                            <div className={`bg-gray-800/40 border rounded-lg p-4 hover:border-yellow-400 transition cursor-pointer ${
-                                selectedPlan === 'premium' ? 'border-yellow-400 bg-yellow-400/10' : 'border-gray-700'
+
+                            {/* Plan Personalizado */}
+                            <div className={`relative bg-gray-800/40 rounded-xl border-2 cursor-pointer hover:border-yellow-400 transition-colors ${
+                                selectedPlan === 'premium' ? 'border-yellow-400' : 'border-gray-700'
                             }`} onClick={() => handlePlanChange('premium')}>
-                                <input type="radio" id="premium" name="plan" value="premium" checked={selectedPlan === 'premium'} onChange={() => handlePlanChange('premium')} className="sr-only" />
-                                <label htmlFor="premium" className="cursor-pointer">
-                                    <h4 className="font-bold text-yellow-400 mb-2">Plan Premium</h4>
-                                    <p className="text-sm mb-2">Experiencia VIP</p>
-                                    <p className="text-lg font-bold">${currentPrices.premium.toLocaleString()}</p>
-                                    <ul className="text-xs mt-2 space-y-1">
-                                        <li>• Todo del plan estándar</li>
-                                        <li>• Duración: 8 horas</li>
-                                        <li>• Fotografía profesional</li>
-                                        <li>• Cena especial</li>
+                                <div className="p-6">
+                                    <div className="text-center mb-4">
+                                        <h4 className="text-xl font-bold text-yellow-400 mb-2">Plan Personalizado</h4>
+                                        <p className="text-white text-sm">Experiencia a tu medida</p>
+                                    </div>
+                                    <div className="text-center mb-6">
+                                        <div className="text-3xl font-bold text-white">${(currentPrices.premium / 1000).toFixed(0)}K</div>
+                                        <div className="text-gray-300 text-sm">por persona</div>
+                                    </div>
+                                    <ul className="space-y-3 mb-6">
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Todo del plan estándar
+                                        </li>
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Fotografía profesional
+                                        </li>
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Itinerario personalizado
+                                        </li>
+                                        <li className="flex items-center text-white">
+                                            <svg className="w-4 h-4 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </svg>
+                                            Guía bilingüe disponible
+                                        </li>
                                     </ul>
-                                </label>
+                                </div>
+                                <input type="radio" id="premium" name="plan" value="premium" checked={selectedPlan === 'premium'} onChange={() => handlePlanChange('premium')} className="sr-only" />
                             </div>
                         </div>
                         {selectedPlan && (
-                            <div className="mt-4 p-4 bg-yellow-400/10 border border-yellow-400 rounded-lg">
+                            <div className="mt-6 p-4 bg-yellow-400/10 border border-yellow-400 rounded-lg">
                                 <p className="text-center text-yellow-400 font-semibold">
-                                    Plan seleccionado: <span className="capitalize">{selectedPlan}</span> - ${currentPrices[selectedPlan].toLocaleString()}
+                                    Plan seleccionado: <span className="capitalize">{selectedPlan === 'premium' ? 'personalizado' : selectedPlan}</span> - ${currentPrices[selectedPlan].toLocaleString()}
                                 </p>
+                                {calculation && (
+                                    <div className="mt-4 space-y-2">
+                                        {/* Desglose de personas */}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                            {calculation.children.count > 0 && (
+                                                <div className="text-center">
+                                                    <p className="text-gray-300">Niños/Estudiantes</p>
+                                                    <p className="text-white font-semibold">
+                                                        {calculation.children.count} personas = {formatPrice(calculation.children.total)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {calculation.adults.count > 0 && (
+                                                <div className="text-center">
+                                                    <p className="text-gray-300">Adultos</p>
+                                                    <p className="text-white font-semibold">
+                                                        {calculation.adults.count} personas = {formatPrice(calculation.adults.total)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {calculation.seniors.count > 0 && (
+                                                <div className="text-center">
+                                                    <p className="text-gray-300">Mayores de 62</p>
+                                                    <p className="text-white font-semibold">
+                                                        {calculation.seniors.count} personas = {formatPrice(calculation.seniors.total)}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Total */}
+                                        <div className="text-center border-t border-yellow-400/30 pt-3">
+                                            <p className="text-yellow-400 font-bold text-xl">
+                                                Total: {formatPrice(calculation.total)}
+                                            </p>
+                                            <p className="text-gray-300 text-xs mt-1">
+                                                Total para {calculation.totalPersons} personas
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
