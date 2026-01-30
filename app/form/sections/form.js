@@ -33,7 +33,7 @@ export default function FormPage() {
 
   const currentPrices = getCurrentPrices();
 
-  // Cálculo directo y simple
+  // Cálculo simple sin descuentos
   const calculateTotal = () => {
     if (!selectedPlan) return null;
     
@@ -42,21 +42,12 @@ export default function FormPage() {
     const adults = parseInt(formData.adults) || 0;
     const seniors = parseInt(formData.seniors) || 0;
     
-    // Solo calcular si hay al menos una persona
     const totalPersons = children + adults + seniors;
     if (totalPersons === 0) return null;
     
-    // Precios con descuentos
-    const childrenTotal = Math.round(basePrice * children * 0.7); // 30% descuento
-    const adultsTotal = Math.round(basePrice * adults);
-    const seniorsTotal = Math.round(basePrice * seniors * 0.8); // 20% descuento
-    
-    const total = childrenTotal + adultsTotal + seniorsTotal;
+    const total = basePrice * totalPersons;
     
     return {
-      children: { count: children, total: childrenTotal },
-      adults: { count: adults, total: adultsTotal },
-      seniors: { count: seniors, total: seniorsTotal },
       totalPersons,
       total
     };
@@ -117,7 +108,24 @@ export default function FormPage() {
     }));
   };
 
+  const isFormValid = () => {
+    return (
+      formData.name.trim() &&
+      formData.lastname.trim() &&
+      formData.tel.trim() &&
+      formData.email.trim() &&
+      formData.date &&
+      selectedDestination &&
+      selectedActivity &&
+      selectedPlan &&
+      acceptTerms &&
+      acceptPrivacy
+    );
+  };
+
   return (
+    <>
+    {/* Sección del Formulario */}
     <section className="relative w-full min-h-screen overflow-hidden">
         <Image 
             src="/images/exp_1.png" 
@@ -133,7 +141,7 @@ export default function FormPage() {
             <h2 className="text-4xl font-bold text-white text-balance text-center mb-8">
                 Ingresa tus datos<br />para reservar
             </h2>
-            <div className="w-full max-w-5xl mx-auto px-4 md:px-8 lg:px-12">
+            <div className="w-full max-w-5xl lg:max-w-3xl mx-auto px-4 md:px-8 lg:px-12">
             <form className="space-y-4 md:space-y-6">
                     <div className="flex flex-col md:flex-row justify-between gap-4">
                         <div className="flex-1">
@@ -157,10 +165,6 @@ export default function FormPage() {
                         </div>
                     </div>
                     <div>
-                        <label htmlFor="date" className="block text-sm font-medium mb-1">Fecha de Reserva</label>
-                        <input type="date" id="date" name="date" required value={formData.date} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
-                    </div>
-                    <div>
                         <label htmlFor="destination" className="block text-sm font-medium mb-1">Destino</label>
                         <select id="destination" name="destination" required value={selectedDestination} onChange={handleDestinationChange} className={`w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-yellow-400 [&>option]:bg-white [&>option]:text-gray-800 ${
                             selectedDestination ? 'bg-white text-black border-gray-300' : 'bg-gray-800/40 text-white border-gray-700'
@@ -178,7 +182,7 @@ export default function FormPage() {
                                 selectedActivity ? 'bg-white text-black border-gray-300' : 'bg-gray-800/40 text-white border-gray-700'
                             }`}>
                                 <option value="">Selecciona una actividad</option>
-                                {availableActivities.map((activity) => (
+                                {getAvailableActivities().map((activity) => (
                                     <option key={activity.value} value={activity.value}>{activity.label}</option>
                                 ))}
                             </select>
@@ -198,13 +202,16 @@ export default function FormPage() {
                             <input type="number" id="seniors" name="seniors" min="0" value={formData.seniors} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
                         </div>
                     </div>
+                    <div className="max-w-md mx-auto">
+                        <label htmlFor="date" className="block text-sm font-medium mb-1 text-center">Fecha de Reserva</label>
+                        <input type="date" id="date" name="date" required value={formData.date} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black" />
+                    </div>
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium mb-1">Observaciones (máx. 120 caracteres)</label>
                         <textarea id="description" name="description" maxLength="120" rows="3" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 valid:bg-white valid:text-black resize-none" placeholder="Cuéntanos sobre algo que debamos saber..."></textarea>
                     </div>
-                    
                     {/* Términos y Condiciones */}
-                    <div className="mt-12 mb-16 space-y-4">
+                    <div className="mt-8 mb-8 max-w-md mx-auto space-y-4">
                         <div className="flex items-start space-x-3">
                             <input 
                                 type="checkbox" 
@@ -230,6 +237,25 @@ export default function FormPage() {
                             </label>
                         </div>
                     </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    {/* Sección de Planes */}
+    <section className="relative w-full min-h-screen overflow-hidden">
+        <Image 
+            src="/images/exp_1.png" 
+            alt="Background" 
+            fill
+            className="object-cover object-center" 
+        />
+        
+        <div className="absolute inset-0 bg-black/60"></div>
+        
+        <div className="relative z-10 min-h-screen flex flex-col justify-center text-white py-8">
+            <div className="w-full max-w-5xl mx-auto px-4 md:px-8 lg:px-12">
+                <form className="space-y-4 md:space-y-6">
                     <div className="mt-8">
                         <h3 className="text-lg font-semibold mb-8 text-center">Selecciona tu Plan</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -353,55 +379,35 @@ export default function FormPage() {
                                     Plan seleccionado: <span className="capitalize">{selectedPlan === 'premium' ? 'personalizado' : selectedPlan}</span> - ${currentPrices[selectedPlan].toLocaleString()}
                                 </p>
                                 {calculation && (
-                                    <div className="mt-4 space-y-2">
-                                        {/* Desglose de personas */}
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                            {calculation.children.count > 0 && (
-                                                <div className="text-center">
-                                                    <p className="text-gray-300">Niños/Estudiantes</p>
-                                                    <p className="text-white font-semibold">
-                                                        {calculation.children.count} personas = {formatPrice(calculation.children.total)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                            {calculation.adults.count > 0 && (
-                                                <div className="text-center">
-                                                    <p className="text-gray-300">Adultos</p>
-                                                    <p className="text-white font-semibold">
-                                                        {calculation.adults.count} personas = {formatPrice(calculation.adults.total)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                            {calculation.seniors.count > 0 && (
-                                                <div className="text-center">
-                                                    <p className="text-gray-300">Mayores de 62</p>
-                                                    <p className="text-white font-semibold">
-                                                        {calculation.seniors.count} personas = {formatPrice(calculation.seniors.total)}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                        
-                                        {/* Total */}
-                                        <div className="text-center border-t border-yellow-400/30 pt-3">
-                                            <p className="text-yellow-400 font-bold text-xl">
-                                                Total: {formatPrice(calculation.total)}
-                                            </p>
-                                            <p className="text-gray-300 text-xs mt-1">
-                                                Total para {calculation.totalPersons} personas
-                                            </p>
-                                        </div>
+                                    <div className="mt-4 text-center">
+                                        <p className="text-yellow-400 font-bold text-xl">
+                                            Total: {formatPrice(calculation.total)}
+                                        </p>
+                                        <p className="text-gray-300 text-xs mt-1">
+                                            Para {calculation.totalPersons} personas
+                                        </p>
                                     </div>
                                 )}
                             </div>
                         )}
                     </div>
                     <div>
-                        <button type="submit" className="w-full bg-yellow-400 text-black px-4 py-2 rounded-md font-bold hover:bg-yellow-500 transition">Enviar Reserva</button>
+                        <button 
+                            type="submit" 
+                            disabled={!isFormValid()}
+                            className={`w-full px-4 py-2 rounded-md font-bold transition ${
+                                isFormValid() 
+                                    ? 'bg-yellow-400 text-black hover:bg-yellow-500' 
+                                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            }`}
+                        >
+                            Enviar Reserva
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </section>
+    </>
   );
 }
