@@ -103,9 +103,21 @@ export default function Events() {
               fill
               className="object-cover"
             />
+            <div className="absolute inset-0 bg-black/40"></div>
+            
+            {/* Información del evento */}
+            <div className="absolute top-4 left-4 right-4 text-white text-center">
+              <h3 className="text-lg md:text-xl font-bold mb-1">{events[currentImage].title}</h3>
+              <p className="text-sm md:text-base opacity-90">{events[currentImage].date}</p>
+            </div>
+            
+            {/* Cupos disponibles */}
+            <div className="absolute bottom-4 left-4 text-white">
+              <p className="text-lg font-bold">{events[currentImage].cupos}</p>
+            </div>
 
             {/* BOTÓN */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+            <div className="absolute bottom-4 right-4">
               <ReserveBtn />
             </div>
           </div>
