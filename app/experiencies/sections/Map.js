@@ -2,83 +2,226 @@ import Image from "next/image";
 
 export default function Map() {
     return (
-        <section className="relative w-full min-h-screen bg-[#F7F7F7] flex flex-col text-black justify-between items-center">
-            <div className="mt-24 md:mt-36">
-                <h2 className="text-2xl md:text-4xl font-semibold text-center mb-4 md:mb-2 px-4">
-                Mapa del Recorrido
+        <section className="relative w-full min-h-screen flex flex-col text-black justify-center items-center px-6 py-12" style={{backgroundColor: 'var(--bg-color)'}}>
+            <div className="w-full max-w-6xl">
+                <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 text-gray-900">
+                    Detalles de la Aventura
                 </h2>
-                <div className="relative w-full max-w-7xl mx-auto flex flex-col items-center justify-between gap-4 md:gap-2 lg:gap-2 px-4 md:px-6 py-4 mb-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-2 lg:gap-4 w-full max-w-5xl">
-                        <div className="relative w-auto flex flex-row items-center justify-center rounded-full border-2 border-black px-2 md:px-3 py-1">
-                             <Image
-                             src="/icons/mountains.svg"
-                             alt="mountains icon"
-                             width={24}
-                             height={24}
-                             className="md:w-8 md:h-8 object-contain mx-1 md:mx-2"
-                             />
-                             <p className="relative text-center text-balance font-bold text-xs md:text-sm lg:text-base">Meditación Ancestral</p>
+                
+                {/* Grid de métricas del recorrido */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    
+                    {/* Distancia */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <div className="flex items-center mb-4">
+                            <Image
+                                src="/icons/mountains.svg"
+                                alt="Icono de distancia"
+                                width={32}
+                                height={32}
+                                className="mr-3"
+                            />
+                            <h3 className="text-xl font-bold text-gray-900">Distancia Total</h3>
                         </div>
-                        <div className="relative w-auto flex flex-row items-center justify-center rounded-full border-2 border-black px-2 md:px-3 py-1">
-                             <Image
-                             src="/icons/prismatics.svg"
-                             alt="prismatics icon"
-                             width={24}
-                             height={24}
-                             className="md:w-8 md:h-8 object-contain mx-1 md:mx-2"
-                             />
-                             <p className="relative text-center text-balance font-bold text-xs md:text-sm lg:text-base">Ojo de la Montaña</p>
+                        <div className="mb-4">
+                            <div className="flex justify-between text-sm mb-2">
+                                <span>Progreso del sendero</span>
+                                <span>8.2 km</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div className="bg-green-500 h-3 rounded-full" style={{width: '75%'}}></div>
+                            </div>
                         </div>
-                        <div className="relative w-auto flex flex-row items-center justify-center rounded-full border-2 border-black px-2 md:px-3 py-1">
-                             <Image
-                             src="/icons/bird.svg"
-                             alt="bird icon"
-                             width={24}
-                             height={24}
-                             className="md:w-8 md:h-8 object-contain mx-1 md:mx-2"
-                             />
-                             <p className="relative text-center text-balance font-bold text-xs md:text-sm lg:text-base">Avistamiento de aves</p>
+                        <p className="text-2xl font-bold text-green-600">8.2 km</p>
+                        <p className="text-sm text-gray-600">Duración: 4-5 horas</p>
+                    </div>
+
+                    {/* Dificultad */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <div className="flex items-center mb-4">
+                            <Image
+                                src="/icons/bird.svg"
+                                alt="Icono de dificultad"
+                                width={32}
+                                height={32}
+                                className="mr-3"
+                            />
+                            <h3 className="text-xl font-bold text-gray-900">Nivel de Dificultad</h3>
                         </div>
-                        <div className="relative w-auto flex flex-row items-center justify-center rounded-full border-2 border-black px-2 md:px-3 py-1">
-                             <Image
-                             src="/icons/flower.svg"
-                             alt="flower icon"
-                             width={24}
-                             height={24}
-                             className="md:w-8 md:h-8 object-contain mx-1 md:mx-2"
-                             />
-                             <p className="relative text-center text-balance font-bold text-xs md:text-sm lg:text-base">Conexión Natural</p>
+                        <div className="flex items-center mb-4">
+                            <div className="flex space-x-1">
+                                <div className="w-4 h-8 bg-green-500 rounded"></div>
+                                <div className="w-4 h-8 bg-yellow-500 rounded"></div>
+                                <div className="w-4 h-8 bg-orange-500 rounded"></div>
+                                <div className="w-4 h-8 bg-gray-300 rounded"></div>
+                                <div className="w-4 h-8 bg-gray-300 rounded"></div>
+                            </div>
                         </div>
-                        <div className="relative w-auto flex flex-row items-center justify-center rounded-full border-2 border-black px-2 md:px-3 py-1">
-                             <Image
-                             src="/icons/books.svg"
-                             alt="books icon"
-                             width={24}
-                             height={24}
-                             className="md:w-8 md:h-8 object-contain mx-1 md:mx-2"
-                             />
-                             <p className="relative text-center text-balance font-bold text-xs md:text-sm lg:text-base">Memoria Viva</p>
+                        <p className="text-2xl font-bold text-orange-600">Moderado</p>
+                        <p className="text-sm text-gray-600">Senderos irregulares</p>
+                    </div>
+
+                    {/* Elevación */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <div className="flex items-center mb-4">
+                            <Image
+                                src="/icons/prismatics.svg"
+                                alt="Icono de elevación"
+                                width={32}
+                                height={32}
+                                className="mr-3"
+                            />
+                            <h3 className="text-xl font-bold text-gray-900">Elevación</h3>
+                        </div>
+                        <div className="mb-4">
+                            <div className="flex justify-between text-sm mb-2">
+                                <span>Ganancia de altura</span>
+                                <span>+450m</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div className="bg-blue-500 h-3 rounded-full" style={{width: '60%'}}></div>
+                            </div>
+                        </div>
+                        <p className="text-2xl font-bold text-blue-600">3,200m</p>
+                        <p className="text-sm text-gray-600">Altitud máxima</p>
+                    </div>
+                </div>
+
+                {/* Grid de datos oficiales del parque */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    
+                    {/* Extensión */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <div className="flex items-center mb-4">
+                            <Image
+                                src="/icons/mountains.svg"
+                                alt="Icono de extensión"
+                                width={32}
+                                height={32}
+                                className="mr-3"
+                            />
+                            <h3 className="text-xl font-bold text-gray-900">Extensión del Parque</h3>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-3xl font-bold text-green-600 mb-2">76,600</p>
+                            <p className="text-sm text-gray-600">Hectáreas protegidas</p>
+                            <p className="text-xs text-gray-500 mt-2">Declarado en 1977</p>
+                        </div>
+                    </div>
+
+                    {/* Biodiversidad */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <div className="flex items-center mb-4">
+                            <Image
+                                src="/icons/bird.svg"
+                                alt="Icono de biodiversidad"
+                                width={32}
+                                height={32}
+                                className="mr-3"
+                            />
+                            <h3 className="text-xl font-bold text-gray-900">Biodiversidad</h3>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Especies de aves</span>
+                                <span className="text-lg font-bold text-yellow-600">531</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Especies de plantas</span>
+                                <span className="text-lg font-bold text-green-600">1,400+</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-600">Mamíferos</span>
+                                <span className="text-lg font-bold text-blue-600">101</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div className="relative w-full aspect-video max-w-7xl">
-                <Image
-                    src="/images/map.png"
-                    alt="Mapa del Parque Natural Nacional Chingaza"
-                    fill
-                    className="object-contain"
-                />
-                <div className="absolute top-4 md:top-8 left-4 md:left-8 lg:left-16 xl:left-24 text-center">
-                    <h2 className="text-lg md:text-2xl lg:text-3xl font-bold text-black px-2 md:px-4 mb-1 md:mb-2">Distancia aprox.</h2>
-                    <div className="flex flex-row items-baseline justify-center">
-                        <h2 className="text-4xl md:text-6xl lg:text-8xl font-bold text-black">8</h2>
-                        <p className="text-lg md:text-2xl lg:text-2xl font-semibold text-black px-1">km</p>
+
+                {/* Ecosistemas y reconocimientos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    {/* Ecosistemas */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h3 className="text-xl font-bold mb-4 text-gray-900">Ecosistemas Principales</h3>
+                        <div className="space-y-3">
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Bosque altoandino y subandino</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Páramo</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-cyan-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Humedales altoandinos</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Complejo lacustre (40+ lagos)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Reconocimientos */}
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h3 className="text-xl font-bold mb-4 text-gray-900">Reconocimientos</h3>
+                        <div className="space-y-3">
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Área de Importancia para Aves (AICA)</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Sitio Ramsar por humedales</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Lista Verde de la UICN</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                                <span className="text-sm text-gray-800">Declarado en 1977</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Fauna destacada */}
+                <div className="bg-white rounded-2xl p-8 shadow-lg">
+                    <h3 className="text-2xl font-bold mb-6 text-center text-gray-900">Fauna Emblemática</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="bg-brown-100 p-4 rounded-full mb-3">
+                                <Image src="/icons/mountains.svg" alt="Oso andino" width={32} height={32} />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">Oso Andino</p>
+                            <p className="text-xs text-gray-600">Especie emblemática</p>
+                        </div>
+                        <div className="flex flex-col items-center text-center">
+                            <div className="bg-gray-100 p-4 rounded-full mb-3">
+                                <Image src="/icons/bird.svg" alt="Cóndor" width={32} height={32} />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">Cóndor Andino</p>
+                            <p className="text-xs text-gray-600">Ave nacional</p>
+                        </div>
+                        <div className="flex flex-col items-center text-center">
+                            <div className="bg-yellow-100 p-4 rounded-full mb-3">
+                                <Image src="/icons/flower.svg" alt="Frailejones" width={32} height={32} />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">Frailejones</p>
+                            <p className="text-xs text-gray-600">Flora característica</p>
+                        </div>
+                        <div className="flex flex-col items-center text-center">
+                            <div className="bg-blue-100 p-4 rounded-full mb-3">
+                                <Image src="/icons/drop.svg" alt="Lagos" width={32} height={32} />
+                            </div>
+                            <p className="text-sm font-semibold text-gray-900">Lagos Glaciares</p>
+                            <p className="text-xs text-gray-600">Lagunas de Siecha</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     );
-
 }
