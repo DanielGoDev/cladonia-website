@@ -1,4 +1,4 @@
-import Card from "@/components/ui/Card";
+import Card from "@/app/_components/ui/Card";
 
 export default function Experiencies() {
     return (
