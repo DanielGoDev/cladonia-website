@@ -1,4 +1,4 @@
-import Card from "@/app/_components/ui/Card";
+import InfoCard from "@/app/_components/ui/InfoCard";
 import { experiences } from "@/data/experiences";
 
 export default function Activities({ data = experiences.chingaza }) {
@@ -8,7 +8,7 @@ export default function Activities({ data = experiences.chingaza }) {
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900 text-center mb-8 md:mb-12">Actividades</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {data.activities.map((activity, index) => (
-                        <Card 
+                        <InfoCard 
                             key={index}
                             title={activity.title}
                             description={activity.description}
