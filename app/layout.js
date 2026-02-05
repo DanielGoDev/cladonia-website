@@ -1,5 +1,5 @@
 import "./globals.css";
-import Footer from "../components/ui/Footer";
+import Footer from "./_components/ui/Footer";
 import { Montserrat} from "next/font/google"
 
 const montserrat = Montserrat({
