@@ -2,10 +2,10 @@ import Card from "@/components/ui/Card";
 
 export default function Experiencies() {
     return (
-        <section className="relative w-screen min-h-screen overflow-hidden bg-black py-20 flex justify-center">  
+        <section className="relative w-screen min-h-screen overflow-hidden py-20 flex justify-center" style={{backgroundColor: 'var(--bgsection-primary)'}}>  
             <div className="max-w-7xl mx-auto px-6">
-                <p className="text-md font-semibold text-white text-center mb-4">Conoce más</p>
-                <h2 className="text-4xl font-bold text-white text-center mb-12">Experiencias</h2>
+                <p className="text-md font-semibold text-gray-900 text-center mb-4">Conoce más</p>
+                <h2 className="text-4xl font-bold text-gray-900 text-center mb-12">Experiencias</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <Card 
                         title="Parque Natural Nacional Chingaza"

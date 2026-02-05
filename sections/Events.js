@@ -40,11 +40,11 @@ export default function Events() {
   const getPrevIndex = () => (currentImage - 1 + events.length) % events.length;
   const getNextIndex = () => (currentImage + 1) % events.length;
   return (
-    <section className="top-0 relative w-full bg-black py-8 md:py-12 text-white">
+    <section className="top-0 relative w-full py-8 md:py-12 text-gray-900" style={{backgroundColor: '#F7F7F7'}}>
       
       {/* TITULO */}
       <div className="text-center mb-8 md:mb-12">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
         Eventos Programados
         </h2>
       </div>
@@ -62,10 +62,10 @@ export default function Events() {
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-black/40"></div>
+              <div className="absolute inset-0 bg-black/20"></div>
               <div className="absolute top-4 left-4 right-4 text-white text-center">
                 <h3 className="text-lg font-bold mb-1">{event.title}</h3>
-                <p className="text-sm opacity-90">{event.date}</p>
+                <p className="text-lg">{event.date}</p>
               </div>
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <p className="text-lg font-bold">{event.cupos}</p>
@@ -81,7 +81,7 @@ export default function Events() {
         <div className="hidden md:flex items-center justify-center max-w-6xl mx-auto">
           
           {/* Flecha izquierda */}
-          <button onClick={prevImage} className="absolute left-2 md:left-6 z-20 text-white/30 hover:text-white/60 text-4xl md:text-6xl">
+          <button onClick={prevImage} className="absolute left-2 md:left-6 z-20 text-black/30 hover:text-black/60 text-4xl md:text-6xl">
             ‹
           </button>
 
@@ -106,9 +106,9 @@ export default function Events() {
             <div className="absolute inset-0 bg-black/40"></div>
             
             {/* Información del evento */}
-            <div className="absolute top-4 left-4 right-4 text-white text-center">
-              <h3 className="text-lg md:text-xl font-bold mb-1">{events[currentImage].title}</h3>
-              <p className="text-sm md:text-base opacity-90">{events[currentImage].date}</p>
+            <div className="absolute top-6 left-4 right-4 text-white text-center">
+              <h3 className="text-xl md:text-2xl font-bold mb-1">{events[currentImage].title}</h3>
+              <p className="text-xl md:text-lg font-bold text-white">{events[currentImage].date}</p>
             </div>
             
             {/* Cupos disponibles */}
@@ -133,7 +133,7 @@ export default function Events() {
           </div>
 
           {/* Flecha derecha */}
-          <button onClick={nextImage} className="absolute right-2 md:right-6 z-20 text-white/30 hover:text-white/60 text-4xl md:text-6xl">
+          <button onClick={nextImage} className="absolute right-2 md:right-6 z-20 text-black/30 hover:text-black/60 text-4xl md:text-6xl">
             ›
           </button>
 
@@ -142,7 +142,7 @@ export default function Events() {
       </div>
 
       {/* DESCRIPCIÓN */}
-      <p className="mt-6 md:mt-10 max-w-2xl mx-auto text-center text-xs md:text-sm lg:text-base text-white/70 px-4">
+      <p className="mt-6 md:mt-10 max-w-2xl mx-auto text-center text-xs md:text-sm lg:text-base text-gray-600 px-4">
         {events[currentImage].description}
       </p>
 

@@ -2,8 +2,8 @@ import Image from "next/image";
 
 export default function Recommendations() {
     return (
-    <section className="relative w-full min-h-screen md:h-screen bg-[#EEE] p-4 md:p-8 xl:p-24">
-        <h2 className="text-2xl md:text-4xl font-semibold text-center mt-8 md:mt-12 text-black">
+    <section className="relative w-full min-h-screen md:h-screen p-4 md:p-8 xl:p-24" style={{backgroundColor: 'var(--bgsection-secundary)'}}>
+        <h2 className="text-2xl md:text-4xl font-bold text-center mt-8 md:mt-12 text-gray-900">
         Recomendaciones
         </h2>
         <div className="relative w-full max-w-7xl mx-auto h-[calc(100%-4rem)] md:h-[calc(100%-6rem)] p-4 md:p-6 flex items-center">
@@ -16,7 +16,7 @@ export default function Recommendations() {
                         height={48}
                         className="mb-2"
                     />
-                    <h3 className="text-base md:text-lg font-bold mb-2 text-black">No lleves plásticos ni desechables</h3>
+                    <h3 className="text-base md:text-lg font-bold mb-2 text-gray-900">No lleves plásticos ni desechables</h3>
                     <p className="text-gray-600 text-xs md:text-sm text-balance">Ayuda a conservar el ecosistema libre de contaminación.</p>
                 </div>
                 <div className="bg-white p-4 md:py-6 md:px-4 xl:py-8 xl:px-6 rounded-lg text-center flex flex-col justify-center items-center">
@@ -27,7 +27,7 @@ export default function Recommendations() {
                         height={48}
                         className="mb-2"
                     />
-                    <h3 className="text-base md:text-lg font-bold mb-2 text-black">Usa calzado cómodo y resistente</h3>
+                    <h3 className="text-base md:text-lg font-bold mb-2 text-gray-900">Usa calzado cómodo y resistente</h3>
                     <p className="text-gray-600 text-xs md:text-sm text-balance">Los senderos pueden ser irregulares y húmedos</p>
                 </div>
                 <div className="bg-white p-4 md:py-6 md:px-4 xl:py-8 xl:px-6 rounded-lg text-center flex flex-col justify-center items-center">
@@ -38,7 +38,7 @@ export default function Recommendations() {
                         height={48}
                         className="mb-2"
                     />
-                    <h3 className="text-base md:text-lg font-bold mb-2 text-black">Hidrátate con tarro reutilizable</h3>
+                    <h3 className="text-base md:text-lg font-bold mb-2 text-gray-900">Hidrátate con tarro reutilizable</h3>
                     <p className="text-gray-600 text-xs md:text-sm text-balance">Preferiblemente evita botellas plásticas.</p>
                 </div>
                 <div className="bg-white p-4 md:py-6 md:px-4 xl:py-8 xl:px-6 rounded-lg text-center flex flex-col justify-center items-center">
@@ -49,7 +49,7 @@ export default function Recommendations() {
                         height={48}
                         className="mb-2"
                     />
-                    <h3 className="text-base md:text-lg font-bold mb-2 text-black">Respeta la naturaleza</h3>
+                    <h3 className="text-base md:text-lg font-bold mb-2 text-gray-900">Respeta la naturaleza</h3>
                     <p className="text-gray-600 text-xs md:text-sm text-balance">No extraer plantas ni molestar animales.</p>
                 </div>
             </div>

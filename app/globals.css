@@ -6,15 +6,15 @@
   --button-hover: #FFE190;
   --bg-header: #777777/20;
   --bg-map:#EEEEEE;
+  --bridge-color: #D9D9D9;
+  --bg-color: #F7F7F7;
+  --bgsection-primary: #EBEBEB;
+  --bgsection-secundary: #CFCFCF;
 }
 
 @layer utilities {
   .hero-overlay {
-    background: linear-gradient(
-      to top,
-      rgb(0, 0, 0),
-      rgba(0, 0, 0, 0)
-    );
+    display: none;
   }
   
   .scrollbar-hide {
