@@ -1,8 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function FormPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [selectedDestination, setSelectedDestination] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
@@ -19,6 +22,22 @@ export default function FormPage() {
     seniors: 0,
     description: ""
   });
+
+  // Preseleccionar experiencia desde URL
+  useEffect(() => {
+    const experience = searchParams.get('experience');
+    if (experience) {
+      const experienceMap = {
+        'chingaza': 'chingaza',
+        'cocuy': 'zoque',
+        'fotografia': 'fotografico'
+      };
+      const mappedExperience = experienceMap[experience];
+      if (mappedExperience) {
+        setSelectedDestination(mappedExperience);
+      }
+    }
+  }, [searchParams]);
 
   // Precios por destino
   const destinationPrices = {
@@ -123,6 +142,13 @@ export default function FormPage() {
     );
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isFormValid()) {
+      router.push('/confirmation');
+    }
+  };
+
   return (
     <>
     {/* Sección del Formulario */}
@@ -142,7 +168,7 @@ export default function FormPage() {
                 Ingresa tus datos<br />para reservar
             </h2>
             <div className="w-full max-w-5xl lg:max-w-3xl mx-auto px-4 md:px-8 lg:px-12">
-            <form className="space-y-4 md:space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                     <div className="flex flex-col md:flex-row justify-between gap-4">
                         <div className="flex-1">
                             <label htmlFor="name" className="block text-sm font-medium mb-1">Nombre</label>
@@ -171,7 +197,7 @@ export default function FormPage() {
                         }`}>
                             <option value="">Selecciona un destino</option>
                             <option value="chingaza">Parque Nacional Chingaza</option>
-                            <option value="zoque">Reserva Natural El Zoque</option>
+                            <option value="zoque">Sierra Nevada del Cocuy</option>
                             <option value="fotografico">Tour Fotográfico</option>
                         </select>
                     </div>
@@ -255,7 +281,7 @@ export default function FormPage() {
         
         <div className="relative z-10 min-h-screen flex flex-col justify-center text-white py-8">
             <div className="w-full max-w-5xl mx-auto px-4 md:px-8 lg:px-12">
-                <form className="space-y-4 md:space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
                     <div className="mt-8">
                         <h3 className="text-lg font-semibold mb-8 text-center">Selecciona tu Plan</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
