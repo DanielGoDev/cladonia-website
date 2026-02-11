@@ -1,8 +1,36 @@
+"use client";
 import Image from "next/image";
-import { events } from "@/data/events";
+import { useEvents } from "@/hooks/useEvents";
 import EventReserveButton from "../ui/EventReserveButton";
 
 export default function Events() {
+  const { events, loading } = useEvents();
+
+  console.log('Events:', events);
+  console.log('Loading:', loading);
+
+  if (loading) {
+    return (
+      <section className="relative w-full text-gray-900 bg-white py-12">
+        <div className="text-center">
+          <p className="text-gray-600">Cargando eventos...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!events || events.length === 0) {
+    return (
+      <section className="relative w-full text-gray-900 bg-white py-12">
+        <div className="text-center">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+            Eventos Programados
+          </h2>
+          <p className="text-gray-600">No hay eventos disponibles en este momento.</p>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="relative w-full text-gray-900 bg-white">
       

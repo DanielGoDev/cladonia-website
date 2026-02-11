@@ -1,0 +1,41 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+
+export function useEvents() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('eventos')
+        .select('*')
+        .order('fecha', { ascending: true });
+
+      if (error) throw error;
+
+      // Transformar datos para mantener compatibilidad
+      const transformedEvents = data.map(event => ({
+        id: event.id,
+        title: event.titulo,
+        date: event.fecha,
+        totalCupos: event.total_cupos,
+        cuposDisponibles: event.cupos_disponibles,
+        description: event.descripcion,
+        image: event.imagen
+      }));
+
+      setEvents(transformedEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { events, loading, refetch: fetchEvents };
+}
