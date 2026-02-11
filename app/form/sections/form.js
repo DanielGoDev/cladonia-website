@@ -10,6 +10,7 @@ import { events } from "@/data/events";
 import { plans } from "@/data/plans";
 import { activities } from "@/data/activities";
 import TermsModal from "@/app/_components/ui/TermsModal";
+import { supabase } from "@/lib/supabase";
 
 const EXPERIENCE_MAP = {
   'chingaza': 'chingaza',
@@ -125,11 +126,54 @@ export default function Form() {
         }
       }
 
+      const reservaData = {
+        nombre: data.name,
+        apellido: data.lastname,
+        telefono: data.tel,
+        email: data.email,
+        destino: selectedDestination,
+        actividad: selectedActivity,
+        plan: selectedPlan,
+        fecha: data.date,
+        ninos: parseInt(data.children) || 0,
+        adultos: parseInt(data.adults) || 0,
+        mayores: parseInt(data.seniors) || 0,
+        observaciones: data.description || null,
+        total: calculation?.total || 0
+      };
+
+      const { data: reserva, error } = await supabase
+        .from('reservas')
+        .insert([reservaData])
+        .select();
+
+      if (error) throw error;
+
+      // Enviar email de confirmación al cliente
+      await fetch('/api/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: data.email,
+          nombre: data.name,
+          apellido: data.lastname,
+          destino: selectedDestination,
+          actividad: selectedActivity,
+          plan: plans[selectedPlan].name,
+          fecha: data.date,
+          total: calculation?.total || 0,
+          ninos: parseInt(data.children) || 0,
+          adultos: parseInt(data.adults) || 0,
+          telefono: data.tel
+        })
+      });
+
       toast.success('¡Reserva enviada exitosamente!');
       setTimeout(() => {
         router.push('/confirmation');
       }, 1500);
     } catch (error) {
+      console.error('Error al guardar reserva:', error);
       toast.error('Error al enviar la reserva. Intenta nuevamente.');
     }
   };
@@ -362,7 +406,7 @@ export default function Form() {
         
         <div className="relative z-10 min-h-screen flex flex-col justify-center text-white py-8">
           <div className="w-full max-w-5xl mx-auto px-4 md:px-8 lg:px-12">
-            <div className="space-y-4 md:space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-8 text-center">Selecciona tu Plan</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -437,7 +481,7 @@ export default function Form() {
                   Enviar Reserva
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>
