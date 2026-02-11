@@ -6,11 +6,11 @@ import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
-import { events } from "@/data/events";
 import { plans } from "@/data/plans";
 import { activities } from "@/data/activities";
 import TermsModal from "@/app/_components/ui/TermsModal";
 import { supabase } from "@/lib/supabase";
+import { useEvents } from "@/hooks/useEvents";
 
 const EXPERIENCE_MAP = {
   'chingaza': 'chingaza',
@@ -21,6 +21,7 @@ const EXPERIENCE_MAP = {
 export default function Form() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { events, loading: eventsLoading } = useEvents();
   const [selectedDestination, setSelectedDestination] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
@@ -48,6 +49,8 @@ export default function Form() {
   const { children, adults, seniors, acceptTerms, acceptPrivacy } = watch();
 
   useEffect(() => {
+    if (events.length === 0) return;
+    
     const experience = searchParams.get('experience');
     const destination = searchParams.get('destination');
     const activity = searchParams.get('activity');
@@ -63,7 +66,7 @@ export default function Form() {
         setSelectedDestination(mappedExperience);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, events.length]);
 
   const currentPrices = useMemo(() => {
     if (!selectedDestination) return null;
@@ -124,6 +127,21 @@ export default function Form() {
           toast.error(`Solo hay ${selectedEvent.cuposDisponibles} cupos disponibles`);
           return;
         }
+
+        // Actualizar cupos del evento
+        const cuposResponse = await fetch('/api/update-cupos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId: selectedEvent.id,
+            personas: totalPersons
+          })
+        });
+
+        if (!cuposResponse.ok) {
+          toast.error('Error al actualizar cupos del evento');
+          return;
+        }
       }
 
       const reservaData = {
@@ -134,7 +152,7 @@ export default function Form() {
         destino: selectedDestination,
         actividad: selectedActivity,
         plan: selectedPlan,
-        fecha: data.date,
+        fecha: selectedDestination === 'eventos' && selectedEvent ? selectedEvent.date : data.date,
         ninos: parseInt(data.children) || 0,
         adultos: parseInt(data.adults) || 0,
         mayores: parseInt(data.seniors) || 0,
@@ -160,7 +178,7 @@ export default function Form() {
           destino: selectedDestination,
           actividad: selectedActivity,
           plan: plans[selectedPlan].name,
-          fecha: data.date,
+          fecha: selectedDestination === 'eventos' && selectedEvent ? selectedEvent.date : data.date,
           total: calculation?.total || 0,
           ninos: parseInt(data.children) || 0,
           adultos: parseInt(data.adults) || 0,
@@ -289,15 +307,33 @@ export default function Form() {
               )}
 
               {selectedDestination === 'eventos' && selectedEvent && (
-                <div className="p-4 bg-yellow-400/10 border border-yellow-400 rounded-lg">
-                  <h4 className="text-lg font-semibold text-yellow-400 mb-2">Cupos Disponibles</h4>
-                  <p className="text-white">
-                    <span className="font-bold text-2xl">{selectedEvent.cuposDisponibles}</span> de {selectedEvent.totalCupos} cupos disponibles
-                  </p>
-                  <p className="text-gray-300 text-sm mt-2">
-                    Selecciona el número de personas que no exceda los cupos disponibles
-                  </p>
-                </div>
+                <>
+                  <div className="p-4 bg-yellow-400/10 border border-yellow-400 rounded-lg">
+                    <h4 className="text-lg font-semibold text-yellow-400 mb-2">Evento: {selectedEvent.title}</h4>
+                    <p className="text-white mb-2">
+                      <strong>Fecha del evento:</strong> {new Date(selectedEvent.date).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                    <p className="text-white">
+                      <strong>Cupos disponibles:</strong> <span className="font-bold text-2xl">{selectedEvent.cuposDisponibles}</span> de {selectedEvent.totalCupos}
+                    </p>
+                    <p className="text-gray-300 text-sm mt-2">
+                      Selecciona el número de personas que no exceda los cupos disponibles
+                    </p>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <div className="w-full max-w-md">
+                      <label className="block text-sm font-medium mb-1 text-center">Fecha de Reserva (Automática)</label>
+                      <input 
+                        type="text"
+                        value={new Date(selectedEvent.date).toLocaleDateString('es-CO')}
+                        disabled
+                        className="w-full px-4 py-2 rounded-md bg-gray-600 text-white border border-gray-500 text-center cursor-not-allowed"
+                      />
+                      <p className="text-gray-400 text-xs text-center mt-1">La fecha se establece automáticamente según el evento</p>
+                    </div>
+                  </div>
+                </>
               )}
 
               <div className="flex flex-col md:flex-row gap-4">
@@ -330,30 +366,32 @@ export default function Form() {
                 </div>
               </div>
 
-              <div className="flex justify-center">
-                <div className="w-full max-w-md">
-                  <label className="block text-sm font-medium mb-1 text-center">Fecha de Reserva</label>
-                  <div className="flex justify-center">
-                    <Controller
-                      control={control}
-                      name="date"
-                      rules={{ required: "Fecha es requerida" }}
-                      render={({ field }) => (
-                        <DatePicker
-                          selected={field.value}
-                          onChange={(date) => field.onChange(date)}
-                          minDate={new Date()}
-                          dateFormat="dd/MM/yyyy"
-                          placeholderText="Selecciona una fecha"
-                          className="w-full px-4 py-2 rounded-md bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center"
-                          wrapperClassName="w-full"
-                        />
-                      )}
-                    />
+              {selectedDestination !== 'eventos' && (
+                <div className="flex justify-center">
+                  <div className="w-full max-w-md">
+                    <label className="block text-sm font-medium mb-1 text-center">Fecha de Reserva</label>
+                    <div className="flex justify-center">
+                      <Controller
+                        control={control}
+                        name="date"
+                        rules={{ required: "Fecha es requerida" }}
+                        render={({ field }) => (
+                          <DatePicker
+                            selected={field.value}
+                            onChange={(date) => field.onChange(date)}
+                            minDate={new Date()}
+                            dateFormat="dd/MM/yyyy"
+                            placeholderText="Selecciona una fecha"
+                            className="w-full px-4 py-2 rounded-md bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center"
+                            wrapperClassName="w-full"
+                          />
+                        )}
+                      />
+                    </div>
+                    {errors.date && <span className="text-yellow-400 text-sm font-semibold block text-center mt-1">{errors.date.message}</span>}
                   </div>
-                  {errors.date && <span className="text-yellow-400 text-sm font-semibold block text-center mt-1">{errors.date.message}</span>}
                 </div>
-              </div>
+              )}
 
               <div>
                 <label htmlFor="description" className="block text-sm font-medium mb-1">Observaciones (máx. 120 caracteres)</label>
