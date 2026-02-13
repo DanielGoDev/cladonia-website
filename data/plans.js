@@ -8,24 +8,26 @@ export const plans = {
       'Guía especializado',
       'Póliza de seguro incluida'
     ],
-    prices: {
+    // Tarifas diferenciadas por tipo de visitante
+    rates: {
       // Chingaza
-      lagunas_siecha: 45000,
-      observacion_aves: 50000,
-      fotografia_paisaje: 55000,
+      lagunas_siecha: { children: 30000, adults: 45000, seniors: 0, foreigners: 60000 },
+      observacion_aves: { children: 35000, adults: 50000, seniors: 0, foreigners: 65000 },
+      fotografia_paisaje: { children: 38000, adults: 55000, seniors: 0, foreigners: 70000 },
       // Zoque
-      caminata_ecologica: 50000,
-      avistamiento_fauna: 55000,
-      plantas_medicinales: 48000,
+      caminata_ecologica: { children: 35000, adults: 50000, seniors: 0, foreigners: 65000 },
+      avistamiento_fauna: { children: 38000, adults: 55000, seniors: 0, foreigners: 70000 },
+      plantas_medicinales: { children: 33000, adults: 48000, seniors: 0, foreigners: 63000 },
       // Fotográfico
-      amanecer_montaña: 60000,
-      macro_flora: 58000,
-      paisajes_aereos: 70000,
+      amanecer_montaña: { children: 42000, adults: 60000, seniors: 0, foreigners: 78000 },
+      macro_flora: { children: 40000, adults: 58000, seniors: 0, foreigners: 75000 },
+      paisajes_aereos: { children: 48000, adults: 70000, seniors: 0, foreigners: 90000 },
       // Eventos
-      caminata_ancestral: 40000,
-      tarde_meditacion: 38000,
-      observacion_nocturna: 45000
-    }
+      caminata_ancestral: { children: 28000, adults: 40000, seniors: 0, foreigners: 52000 },
+      tarde_meditacion: { children: 26000, adults: 38000, seniors: 0, foreigners: 50000 },
+      observacion_nocturna: { children: 31000, adults: 45000, seniors: 0, foreigners: 58000 }
+    },
+    prices: {} // Mantener para compatibilidad
   },
   standard: {
     id: 'standard',

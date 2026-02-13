@@ -47,7 +47,7 @@ export default function Form() {
     }
   });
 
-  const { children, adults, seniors, acceptTerms, acceptPrivacy } = watch();
+  const { children, adults, seniors, foreigners, acceptTerms, acceptPrivacy } = watch();
 
   useEffect(() => {
     if (events.length === 0) return;
@@ -67,7 +67,7 @@ export default function Form() {
         setSelectedDestination(mappedExperience);
       }
     }
-  }, [searchParams, events.length]);
+  }, [searchParams, events]);
 
   const currentPrices = useMemo(() => {
     if (!selectedActivity) return null;
@@ -81,17 +81,33 @@ export default function Form() {
   const calculation = useMemo(() => {
     if (!selectedPlan || !currentPrices) return null;
     
-    const basePrice = currentPrices[selectedPlan];
     const childrenCount = parseInt(children) || 0;
     const adultsCount = parseInt(adults) || 0;
+    const seniorsCount = parseInt(seniors) || 0;
+    const foreignersCount = parseInt(foreigners) || 0;
     
     const totalPersons = childrenCount + adultsCount;
     if (totalPersons === 0) return null;
     
-    const total = basePrice * totalPersons;
+    let total = 0;
+    
+    if (selectedPlan === 'basic' && selectedActivity) {
+      // Plan Básico: tarifas diferenciadas
+      const rates = plans.basic.rates[selectedActivity];
+      if (rates) {
+        total = (childrenCount * rates.children) + 
+                (adultsCount * rates.adults) + 
+                (seniorsCount * rates.seniors) + 
+                (foreignersCount * rates.foreigners);
+      }
+    } else {
+      // Planes Estándar y Premium: precio único por persona
+      const basePrice = currentPrices[selectedPlan];
+      total = basePrice * totalPersons;
+    }
     
     return { totalPersons, total };
-  }, [selectedPlan, currentPrices, children, adults]);
+  }, [selectedPlan, currentPrices, children, adults, seniors, foreigners, selectedActivity]);
   
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-CO', {
@@ -252,7 +268,7 @@ export default function Form() {
               
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="w-full md:w-2/5">
-                  <label htmlFor="tel" className="block text-sm font-medium mb-1">Teléfono</label>
+                  <label htmlFor="tel" className="block text-sm font-medium mb-1">Teléfono - WhatsApp</label>
                   <input 
                     {...register("tel", { 
                       required: "Teléfono es requerido",
@@ -503,21 +519,51 @@ export default function Form() {
                 </div>
 
                 {selectedPlan && currentPrices && (
-                  <div className="mt-6 p-4 bg-yellow-400/10 border border-yellow-400 rounded-lg">
-                    <p className="text-center text-yellow-400 font-semibold">
-                      Plan seleccionado: {plans[selectedPlan].name} - ${currentPrices[selectedPlan].toLocaleString()}
-                    </p>
-                    {calculation && (
-                      <div className="mt-4 text-center">
-                        <p className="text-yellow-400 font-bold text-xl">
-                          Total: {formatPrice(calculation.total)}
-                        </p>
-                        <p className="text-gray-300 text-xs mt-1">
-                          Para {calculation.totalPersons} personas
-                        </p>
+                  <>
+                    {selectedPlan === 'basic' && selectedActivity && plans.basic.rates[selectedActivity] && (
+                      <div className="mt-6 p-4 bg-blue-400/10 border border-blue-400 rounded-lg">
+                        <h4 className="text-lg font-semibold text-blue-400 mb-3">Tarifas Plan Básico</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                          <div className="text-white">
+                            <p className="font-semibold">Niños/Estudiantes</p>
+                            <p className="text-xs text-gray-300">(5 a 25 años)</p>
+                            <p className="text-blue-400 font-bold text-lg">${(plans.basic.rates[selectedActivity].children / 1000).toFixed(0)}K</p>
+                          </div>
+                          <div className="text-white">
+                            <p className="font-semibold">Adultos</p>
+                            <p className="text-xs text-gray-300">(26 a 59 años)</p>
+                            <p className="text-blue-400 font-bold text-lg">${(plans.basic.rates[selectedActivity].adults / 1000).toFixed(0)}K</p>
+                          </div>
+                          <div className="text-white">
+                            <p className="font-semibold">Mayores 60+</p>
+                            <p className="text-xs text-gray-300">Exentos</p>
+                            <p className="text-green-400 font-bold text-lg">Gratis</p>
+                          </div>
+                          <div className="text-white">
+                            <p className="font-semibold">Extranjeros</p>
+                            <p className="text-xs text-gray-300">Tarifa especial</p>
+                            <p className="text-blue-400 font-bold text-lg">${(plans.basic.rates[selectedActivity].foreigners / 1000).toFixed(0)}K</p>
+                          </div>
+                        </div>
                       </div>
                     )}
-                  </div>
+                    
+                    <div className="mt-6 p-4 bg-yellow-400/10 border border-yellow-400 rounded-lg">
+                      <p className="text-center text-yellow-400 font-semibold">
+                        Plan seleccionado: {plans[selectedPlan].name}
+                      </p>
+                      {calculation && (
+                        <div className="mt-4 text-center">
+                          <p className="text-yellow-400 font-bold text-xl">
+                            Total: {formatPrice(calculation.total)}
+                          </p>
+                          <p className="text-gray-300 text-xs mt-1">
+                            Para {calculation.totalPersons} personas
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
 
