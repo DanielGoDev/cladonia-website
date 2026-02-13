@@ -12,7 +12,7 @@ export async function POST(request) {
     const { data, error } = await resend.emails.send({
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: '✅ Confirmación de Reserva - Cladonia Ecoturismo',
+      subject: '✅ Confirmación de Reserva - ALMONTE by Cladonia S.A.S',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h1 style="color: #EAB308;">¡Reserva Confirmada!</h1>
