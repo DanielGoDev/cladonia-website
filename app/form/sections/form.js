@@ -40,6 +40,7 @@ export default function Form() {
       children: 0,
       adults: 1,
       seniors: 0,
+      foreigners: 0,
       description: "",
       acceptTerms: false,
       acceptPrivacy: false
@@ -156,6 +157,7 @@ export default function Form() {
         ninos: parseInt(data.children) || 0,
         adultos: parseInt(data.adults) || 0,
         mayores: parseInt(data.seniors) || 0,
+        extranjeros: parseInt(data.foreigners) || 0,
         observaciones: data.description || null,
         total: calculation?.total || 0
       };
@@ -182,6 +184,8 @@ export default function Form() {
           total: calculation?.total || 0,
           ninos: parseInt(data.children) || 0,
           adultos: parseInt(data.adults) || 0,
+          mayores: parseInt(data.seniors) || 0,
+          extranjeros: parseInt(data.foreigners) || 0,
           telefono: data.tel
         })
       });
@@ -358,6 +362,17 @@ export default function Form() {
                   <input 
                     type="number" 
                     {...register("seniors", { 
+                      min: 0, 
+                      validate: value => !value || parseInt(value) <= (parseInt(adults) || 0) || "No puede exceder el número de adultos"
+                    })}
+                    className="w-full px-4 py-2 rounded-md bg-gray-800/40 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="foreigners" className="block text-sm font-medium mb-1">Extranjeros</label>
+                  <input 
+                    type="number" 
+                    {...register("foreigners", { 
                       min: 0, 
                       validate: value => !value || parseInt(value) <= (parseInt(adults) || 0) || "No puede exceder el número de adultos"
                     })}
